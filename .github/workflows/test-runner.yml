@@ -1,61 +1,62 @@
 
 name: deploy-website on aws with github actions self runner
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Checkout Current Directory
-      run: pwd
+      - name: Checkout Current Directory
+        run: pwd
 
-    - name: Install Docker
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y \
-          ca-certificates \
-          curl \
-          gnupg \
-          lsb-release
-        sudo mkdir -p /etc/apt/keyrings
-        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-        echo \
-          "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-          $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-        sudo apt-get update
-        sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
-        sudo systemctl start docker
-        sudo systemctl enable docker
-        sudo usermod -aG docker $USER
+      - name: Install Docker
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            ca-certificates \
+            curl \
+            gnupg \
+            lsb-release
+          sudo mkdir -p /etc/apt/keyrings
+          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+          sudo apt-get update
+          sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+          sudo systemctl start docker
+          sudo systemctl enable docker
+          sudo usermod -aG docker $USER
 
-    - name: Check Docker version
-      run: docker --version
+      - name: Check Docker version
+        run: docker --version
 
-    - name: Check running Docker containers
-      run: docker container ls
+      - name: Check running Docker containers
+        run: docker container ls
 
-    - name: Stop running Docker container
-      run: sudo docker container stop csn-nginx || true
+      - name: Stop running Docker container
+        run: sudo docker container stop csn-nginx || true
 
-    - name: Delete running Docker container
-      run: sudo docker container rm csn-nginx || true
+      - name: Delete running Docker container
+        run: sudo docker container rm csn-nginx || true
 
-    - name: Docker build image to start container
-      run: sudo docker build -t csn-nginx .
+      - name: Docker build image to start container
+        run: sudo docker build -t csn-nginx .
 
-    - name: Check built Docker images
-      run: docker images
+      - name: Check built Docker images
+        run: docker images
 
-    - name: Create and start Docker container
-      run: sudo docker container run --name csn-nginx -p 8080:80 -d csn-nginx
+      - name: Create and start Docker container
+        run: sudo docker container run --name csn-nginx -p 8080:80 -d csn-nginx
 
-    - name: Check running Docker containers again
-      run: docker container ls
+      - name: Check running Docker containers again
+        run: docker container ls
 
-    - name: Get logs from the Nginx container
-      run: docker logs csn-nginx
+      - name: Get logs from the Nginx container
+        run: docker logs csn-nginx
