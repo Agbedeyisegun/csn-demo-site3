@@ -8,7 +8,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
       - name: Checkout code
@@ -35,10 +35,10 @@ jobs:
           sudo usermod -aG docker $USER
 
       - name: Check Docker version
-        run: docker --version
+        run: sudo docker --version
 
       - name: Check running Docker containers
-        run: docker container ls
+        run: sudo docker container ls
 
       - name: Stop running Docker container
         run: sudo docker container stop csn-nginx || true
@@ -50,13 +50,13 @@ jobs:
         run: sudo docker build -t csn-nginx .
 
       - name: Check built Docker images
-        run: docker images
+        run: sudo docker images
 
       - name: Create and start Docker container
         run: sudo docker container run --name csn-nginx -p 8080:80 -d csn-nginx
 
       - name: Check running Docker containers again
-        run: docker container ls
+        run: sudo docker container ls
 
       - name: Get logs from the Nginx container
-        run: docker logs csn-nginx
+        run: sudo docker logs csn-nginx
