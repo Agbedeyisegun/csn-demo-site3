@@ -51,6 +51,9 @@ jobs:
 
       - name: Check built Docker images
         run: sudo docker images
+      
+      - name: delete used Docker images
+        run: sudo docker image rm
 
       - name: Create and start Docker container
         run: sudo docker container run --name csn-nginx -p 8080:80 -d csn-nginx
@@ -60,3 +63,11 @@ jobs:
 
       - name: Get logs from the Nginx container
         run: sudo docker logs csn-nginx
+      
+      - name: list the content of html file
+        run: sudo docker container exec csn-nginx ls /usr/share/nginx/html/
+      
+      - name: to check the Nginx container if the index file is install
+        run: sudo docker container exec csn-nginx cat /usr/share/nginx/html/index.html
+
+
