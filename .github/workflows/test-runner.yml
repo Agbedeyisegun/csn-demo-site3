@@ -77,5 +77,20 @@ jobs:
       
       - name: to check the Nginx container if the index file is install
         run: sudo docker container exec csn-nginx cat /usr/share/nginx/html/index.html
+  scan:
+    - runs-on: self-hosted
+      need: deploy
+      steps:
+        - name: checkout repository
+          uses: actions/checkout@v4
+        
+        - name: install Arachni
+          run: |
+            sudo apt update
+            sudo apt install -y arachni
+
+        - name: Arachni Dast Scan 
+          run: |
+            arachni https://Agbedeyisegun.github.io/csn-demo-site/ ---report-save-path=output.afr
 
 
