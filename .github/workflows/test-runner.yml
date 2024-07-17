@@ -81,13 +81,16 @@ jobs:
     runs-on: self-hosted
     needs: deploy
     steps:
-      - name: checkout repository
-        uses: actions/checkout@v4
-        
-      - name: install Arachni
+      - name: install Dependencies
         run: |
-            sudo apt update
-            sudo apt install -y arachni
+            sudo apt-get update
+            sudo apt-get install -y libcurl4-openssl-dev libxml2 libxml2-dev libxslt1-dev zlib1g-dev
+
+      - name: Download Arachni
+        run: |
+          wget https://github.com/Arachni/arachni/releases/download/v1.5.1/arachni-1.5.1-0.5.12-linux-x86_64.tar.gz
+          tar -xvzf arachni-1.5.1-0.5.12-linux-x86_64.tar.gz
+      
 
       - name: Arachni Dast Scan 
         run: |
