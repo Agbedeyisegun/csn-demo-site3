@@ -79,7 +79,7 @@ jobs:
         run: sudo docker container exec csn-nginx cat /usr/share/nginx/html/index.html
   scan:
     runs-on: self-hosted
-    need: deploy
+    needs: deploy
     steps:
       - name: checkout repository
         uses: actions/checkout@v4
